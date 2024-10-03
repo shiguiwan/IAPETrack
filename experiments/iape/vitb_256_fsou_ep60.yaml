@@ -1,0 +1,85 @@
+DATA:
+  #SAMPLER_MODE: 'trident_seq'
+  MAX_SAMPLE_INTERVAL: 200
+  MEAN:
+    - 0.485
+    - 0.456
+    - 0.406
+  SEARCH:
+    CENTER_JITTER: 3
+    FACTOR: 4.0
+    SCALE_JITTER: 0.25
+    SIZE: 256
+    NUMBER: 3 #1
+  STD:
+    - 0.229
+    - 0.224
+    - 0.225
+  TEMPLATE:
+    CENTER_JITTER: 0
+    FACTOR: 2.0
+    SCALE_JITTER: 0
+    SIZE: 128
+  TRAIN:
+    DATASETS_NAME:
+#      - GOT10K_i_vottrain
+      - VTUAV_train
+      - VTUAV_train_l
+      - LasHeR_train
+      - LasHeR_test
+    DATASETS_RATIO:
+      - 1
+      - 1
+      - 1
+      - 1
+    SAMPLE_PER_EPOCH: 40000
+  VAL:
+    DATASETS_NAME:
+#      - GOT10K_i_votval
+      - VTUAV_test
+    DATASETS_RATIO:
+      - 1
+    SAMPLE_PER_EPOCH: 5000 #10000
+MODEL:
+  PRETRAIN_FILE: 'mae_pretrain_vit_base.pth'
+  TGT_TYPE: 'allmax'
+  BACKBONE:
+    TYPE: vit_base_fs
+    STRIDE: 16
+    FS_LOC: [3, 6, 9] #[]
+  HEAD:
+    TYPE: CENTER
+    NUM_CHANNELS: 256
+  FUSION: #新增
+    HIDDEN_DIM: 768
+    DROPOUT: 0.1
+    NHEADS: 8
+    DIM_FEEDFORWARD: 2048
+TRAIN:
+  BACKBONE_MULTIPLIER: 0.1
+  DROP_PATH_RATE: 0.1
+  BATCH_SIZE: 3 #12 #40
+  EPOCH: 61 #60 #300
+  GIOU_WEIGHT: 2.0
+  L1_WEIGHT: 5.0
+  GRAD_CLIP_NORM: 0.1
+  LR: 0.0001 #0.0004
+  LR_DROP_EPOCH: 20 #240
+  NUM_WORKER: 0 #12 #16
+  OPTIMIZER: ADAMW
+  SCHEDULER:
+    TYPE: step
+    DECAY_RATE: 0.1
+  VAL_EPOCH_INTERVAL: 1 #20
+  WEIGHT_DECAY: 0.0001
+TEST:
+  EPOCH: 61 #60 #300
+  SEARCH_FACTOR: 4.0
+  SEARCH_SIZE: 256
+  TEMPLATE_FACTOR: 2.0
+  TEMPLATE_SIZE: 128
+  HYPER:
+    LASOT: 0.4
+    NFS: 0.60
+    UAV: 0.55
+    AVIST: 0.4
